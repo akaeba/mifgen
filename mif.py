@@ -15,9 +15,7 @@
 @note:          Converts to Altera MIF format
                   Anaconda: run ./mif.py [args]
 
-@see:           https://gist.github.com/mgerst/62794cbbe672d4039b9e#file-convert_to_mif-py
-@see:           https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/reference/glossary/def_mif.htm
-@see:           https://faculty-web.msoe.edu/johnsontimoj/EE3921/files3921/mif_file_format.pdf
+@see:           https://github.com/akaeba/mif
 """
 
 
