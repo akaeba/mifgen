@@ -24,8 +24,6 @@ Converter to Altera [MIF](https://www.intel.com/content/www/us/en/programmable/q
 
 ### Options
 
-### Options
-
 | Option                 | Description                            | Remarks                                   |
 | ---------------------- | -------------------------------------- | ----------------------------------------- |
 | -d, [--depth=1024]     | number of words                        | if input has less data, padding with 0xff |
