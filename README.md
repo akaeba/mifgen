@@ -39,3 +39,10 @@ Converter to Altera [MIF](https://www.intel.com/content/www/us/en/programmable/q
 ```bash
 python3 mif.py
 ```
+
+
+## References
+
+* [Memory Initialization File (.mif) Definition](https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/reference/glossary/def_mif.htm)
+* [convert_to_mif](https://gist.github.com/mgerst/62794cbbe672d4039b9e#file-convert_to_mif-py)
+* [MIF File Format](https://faculty-web.msoe.edu/johnsontimoj/EE3921/files3921/mif_file_format.pdf)
