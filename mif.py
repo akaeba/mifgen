@@ -13,7 +13,7 @@
 @date:          2022-08-23
 
 @note:          Converts to Altera MIF format
-                  Anaconda: run ./mif.py [args]
+                  Anaconda: run ./mif.py --depth=<depth> --width=<width> <infile>
 
 @see:           https://github.com/akaeba/mif
 """
@@ -24,16 +24,21 @@ import argparse
 from datetime import datetime
 
 
+# CLI Parser
 parser = argparse.ArgumentParser(description='A script to convert binary assembly to a mif file')
 
 parser.add_argument('infile', nargs=1, help='Input File', metavar='FILE')
-parser.add_argument('outfile', nargs=1, help='Output Assembly File', metavar='FILE')
 
+parser.add_argument('-o', '--outfile', nargs=1, type=str, default='', help='Output MIF File')
 parser.add_argument('-d', '--depth', nargs=1, type=int, default=1024)
-parser.add_argument('-w', '--width', nargs=1, type=int, default=1, choices=[1, 2, 4, 8])
-parser.add_argument('-e', '--endianness', nargs=1, type=str, default='big', choices=['big', 'little'])
+parser.add_argument('-w', '--width', nargs=1, type=int, default=1, choices=[1, 2, 4, 8], help='Number of bytes per word')
+parser.add_argument('-e', '--endianness', nargs=1, type=str, default='big', choices=['big', 'little'], help='Endianness of output file')
 args = parser.parse_args()
 
+
+# default outfile
+if ( 0 == len(''.join(args.outfile))):
+    args.outfile = os.path.splitext(args.infile[0])[0] + '.mif'
 
 # open infile for read
 vals = [];
@@ -47,8 +52,9 @@ if ( '.bin' == (os.path.splitext(args.infile[0])[-1]).lower() ):
 else:
     raise ValueError("Unsupported file type: '" + os.path.splitext(args.infile[0])[-1] + "'")
 
+
 # write MIF file out
-with open(args.outfile[0], 'w') as mif:
+with open(''.join(args.outfile), 'w') as mif:
     # write header
     mif.write("-- auto generated memory initialization file (mif)\n")
     mif.write("-- source : " + args.infile[0] + "\n")
