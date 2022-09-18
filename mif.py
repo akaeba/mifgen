@@ -13,7 +13,7 @@
 @date:          2022-08-23
 
 @note:          Converts to Altera MIF format
-                  Anaconda: run ./mif.py --depth=<depth> --width=<width> <infile>
+                  Anaconda: run ./mif.py --size=<size> --width=<width> <infile>
 
 @see:           https://github.com/akaeba/mif
 """
@@ -30,11 +30,28 @@ parser = argparse.ArgumentParser(description='A script to convert binary assembl
 parser.add_argument('infile', nargs=1, help='Input File', metavar='FILE')
 
 parser.add_argument('-o', '--outfile', nargs=1, type=str, default='', help='Output MIF File')
-parser.add_argument('-d', '--depth', nargs=1, type=int, default=1024)
+parser.add_argument('-s', '--size', nargs=1, type=str, default='1024', help='MIF outfile size in byte')
 parser.add_argument('-w', '--width', nargs=1, type=int, default=1, choices=[1, 2, 4, 8], help='Number of bytes per word')
 parser.add_argument('-e', '--endianness', nargs=1, type=str, default='big', choices=['big', 'little'], help='Endianness of output file')
 args = parser.parse_args()
 
+
+# convert size
+args.size=''.join(args.size)    # make single string
+siexp='KMG'.find(args.size[-1]) # get position of si prefix
+if ( -1 != siexp ):
+    args.size = float(args.size[:-1]) * pow(1024, siexp+1)
+    args.size = int(round(args.size, 0))
+else:
+    try:
+        args.size = int(args.size)
+    except:
+        raise ValueError('Unsupported --size argument "' + args.size + '"')
+
+# check for mulitple in words
+if ( 0 != (args.size % args.width[0])):
+    raise ValueError('--size=' + str(args.size) + ' is not an multiple of --width=' + str(args.width[0]))
+depth = int(round(args.size / args.width[0]))
 
 # default outfile
 if ( 0 == len(''.join(args.outfile))):
@@ -57,12 +74,16 @@ else:
 with open(''.join(args.outfile), 'w') as mif:
     # write header
     mif.write("-- auto generated memory initialization file (mif)\n")
-    mif.write("-- source : " + args.infile[0] + "\n")
-    mif.write("-- size   : " + str(len(vals)*args.width[0]) + " bytes (" + str(len(vals)) + " words)\n")
-    mif.write("-- build  : " + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "\n")
+    mif.write("-- https://github.com/akaeba/mif\n")
+    mif.write("--\n")
+    mif.write("-- source   : " + args.infile[0] + "\n")
+    mif.write("-- build    : " + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "\n")
+    mif.write("-- bin size : " + str(len(vals)*args.width[0]) + " bytes (" + str(len(vals)) + " words)\n")
+    mif.write("-- mif size : " + str(args.size) + " bytes (" + str(depth) + " words)\n")
+    mif.write("\n")
     mif.write("\n")
     # write data header
-    mif.write("DEPTH = {}; -- number of words\n".format(args.depth[0]))
+    mif.write("DEPTH = {}; -- number of words\n".format(depth))
     mif.write("WIDTH = {}; -- word width\n".format(8*args.width[0]))
     mif.write("ADDRESS_RADIX = HEX;\n")
     mif.write("DATA_RADIX = HEX;\n\n")
@@ -70,9 +91,9 @@ with open(''.join(args.outfile), 'w') as mif:
     mif.write("BEGIN\n")
     mif.write("\n")
     # some prepare
-    adrPad=len('{:x}'.format(args.depth[0]))    # calc number of digits of address
+    adrPad=len('{:x}'.format(depth))    # calc number of digits of address
     # write data
-    for i in range(args.depth[0]):
+    for i in range(depth):
         if ( i < len(vals) ):
             mif.write('{:x}'.format(i).zfill(adrPad) + " : " + '{:x}'.format(vals[i]).zfill(2*args.width[0]) + ";\n")
         else:
