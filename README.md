@@ -11,7 +11,6 @@ Converter to Altera [MIF](https://www.intel.com/content/www/us/en/programmable/q
 | latest                                                    |            | <a id="raw-url" href="https://github.com/akaeba/mif/archive/refs/heads/main.zip">latest.zip</a>  |                |
 
 
-
 ## Features
 
 * converts:
@@ -24,18 +23,20 @@ Converter to Altera [MIF](https://www.intel.com/content/www/us/en/programmable/q
 
 ### Options
 
-| Option                 | Description                            | Remarks                                   |
-| ---------------------- | -------------------------------------- | ----------------------------------------- |
-| -d, [--depth=1024]     | number of words                        | if input has less data, padding with 0xff |
-| -w, [--width=1]        | word width in bytes                    |                                           |
-| -e, [--endianness=big] | byte organization, low/high byte first |                                           |
-
+| Option                     | Description                            | Remarks                                         |
+| -------------------------- | -------------------------------------- | ----------------------------------------------- |
+| infile                     | input file                             | Supported: *.bin                                |
+| -o, [--outfile=infile.mif] | output file (MIF converted)            | if -o not set, output is placed in input folder |
+| -s, [--size=1024]          | MIF size in byte                       | if input has less data, padding with 0xff       |
+| -w, [--width=1]            | word width in bytes                    |                                                 |
+| -e, [--endianness=big]     | byte organization, low/high byte first |                                                 |
 
 
 ### Run
 
+The Command below converts an binary file to MIF with 1K Byte length and a word with of 32Bit (4Byte):
 ```bash
-python3 mif.py
+python3 mif.py --size=1024 --width=4 ./myFile.bin
 ```
 
 
