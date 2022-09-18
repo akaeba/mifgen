@@ -69,6 +69,9 @@ if ( '.bin' == (os.path.splitext(args.infile[0])[-1]).lower() ):
 else:
     raise ValueError("Unsupported file type: '" + os.path.splitext(args.infile[0])[-1] + "'")
 
+# check for truncation
+if ( args.size < (len(vals)*args.width[0]) ):
+    raise ValueError('BIN File (size=' + str(len(vals)*args.width[0]) + ') is larger then targeted MIF file (size=' + str(args.size) + ')')
 
 # write MIF file out
 with open(''.join(args.outfile), 'w') as mif:
