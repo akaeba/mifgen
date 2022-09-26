@@ -23,14 +23,14 @@ Converter to Altera [MIF](https://www.intel.com/content/www/us/en/programmable/q
 
 ### Options
 
-| Option                     | Description                            | Remarks                                         |
-| -------------------------- | -------------------------------------- | ----------------------------------------------- |
-| infile                     | input file                             | Supported: *.bin                                |
-| -o, [--outfile=infile.mif] | output file (MIF converted)            | if -o not set, output is placed in input folder |
-| -s, [--size=1024]          | MIF size in byte                       | if input has less data, padding with 0xff       |
-| -w, [--width=1]            | word width in bytes                    |                                                 |
-| -e, [--endianness=big]     | byte organization, low/high byte first |                                                 |
-| --nocompact                | compress words with same value         | f.e. [0..5] : ab                                |
+| Option                     | Description                               | Remarks                                         |
+| -------------------------- | ----------------------------------------- | ----------------------------------------------- |
+| infile                     | input file                                | Supported: *.bin                                |
+| -o, [--outfile=infile.mif] | output file (MIF converted)               | if -o not set, output is placed in input folder |
+| -s, [--size=1024]          | MIF size in byte                          | if input has less data, padding with 0xff       |
+| -w, [--width=1]            | word width in bytes                       |                                                 |
+| -e, [--endianness=big]     | byte organization, low/high byte first    |                                                 |
+| --nocompact                | disable compressing words with same value | f.e. [0..5] : ab                                |
 
 
 ### Run
