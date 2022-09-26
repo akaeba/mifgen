@@ -30,6 +30,7 @@ Converter to Altera [MIF](https://www.intel.com/content/www/us/en/programmable/q
 | -s, [--size=1024]          | MIF size in byte                       | if input has less data, padding with 0xff       |
 | -w, [--width=1]            | word width in bytes                    |                                                 |
 | -e, [--endianness=big]     | byte organization, low/high byte first |                                                 |
+| --nocompact                | compress words with same value         | f.e. [0..5] : ab                                |
 
 
 ### Run

@@ -33,6 +33,7 @@ parser.add_argument('-o', '--outfile', nargs=1, type=str, default='', help='Outp
 parser.add_argument('-s', '--size', nargs=1, type=str, default='1024', help='MIF outfile size in byte')
 parser.add_argument('-w', '--width', nargs=1, type=int, default=1, choices=[1, 2, 4, 8], help='Number of bytes per word')
 parser.add_argument('-e', '--endianness', nargs=1, type=str, default='big', choices=['big', 'little'], help='Endianness of output file')
+parser.add_argument('--nocompact', action='store_true')
 args = parser.parse_args()
 
 
@@ -68,10 +69,15 @@ if ( '.bin' == (os.path.splitext(args.infile[0])[-1]).lower() ):
             val=binfile.read(args.width[0])
 else:
     raise ValueError("Unsupported file type: '" + os.path.splitext(args.infile[0])[-1] + "'")
+binWords = len(vals)
 
 # check for truncation
 if ( args.size < (len(vals)*args.width[0]) ):
     raise ValueError('BIN File (size=' + str(len(vals)*args.width[0]) + ') is larger then targeted MIF file (size=' + str(args.size) + ')')
+
+# pad if file is to short
+for i in range(len(vals), depth):
+    vals.append(2**(args.width[0]*8)-1)    # all one
 
 # write MIF file out
 with open(''.join(args.outfile), 'w') as mif:
@@ -81,7 +87,7 @@ with open(''.join(args.outfile), 'w') as mif:
     mif.write("--\n")
     mif.write("-- source   : " + args.infile[0] + "\n")
     mif.write("-- build    : " + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "\n")
-    mif.write("-- bin size : " + str(len(vals)*args.width[0]) + " bytes (" + str(len(vals)) + " words)\n")
+    mif.write("-- bin size : " + str(binWords*args.width[0]) + " bytes (" + str(binWords) + " words)\n")
     mif.write("-- mif size : " + str(args.size) + " bytes (" + str(depth) + " words)\n")
     mif.write("\n")
     mif.write("\n")
@@ -96,11 +102,22 @@ with open(''.join(args.outfile), 'w') as mif:
     # some prepare
     adrPad=len('{:x}'.format(depth))    # calc number of digits of address
     # write data
-    for i in range(depth):
-        if ( i < len(vals) ):
-            mif.write('{:x}'.format(i).zfill(adrPad) + " : " + '{:x}'.format(vals[i]).zfill(2*args.width[0]) + ";\n")
-        else:
-            mif.write('{:x}'.format(i).zfill(adrPad) + " : " + "F" * 2*args.width[0] + ";\n") # fill with empty lines
+    i = 0
+    while ( i < depth ):
+        if ( not args.nocompact ):
+            val = vals[i]
+            j = i + 1
+            while ( j < depth - 1 ):
+                if ( val != vals[j] ):
+                    j = j - 1
+                    break
+                j = j + 1
+            if ( j-i > 0):     # compacted line
+                mif.write("[" + '{:x}'.format(i).zfill(adrPad) + ".." + '{:x}'.format(j).zfill(adrPad) + "] : " + '{:x}'.format(val).zfill(2*args.width[0]) + ";\n")
+                i = j + 1
+                continue
+        mif.write('{:x}'.format(i).zfill(adrPad) + " : " + '{:x}'.format(vals[i]).zfill(2*args.width[0]) + ";\n")
+        i = i + 1;
     # done
     mif.write("\n")
     mif.write("END\n")
