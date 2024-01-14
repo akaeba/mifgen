@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 @author:        Andreas Kaeberlein
-@copyright:     Copyright 2022
+@copyright:     Copyright 2024
 @credits:       AKAE
 
 @license:       GPLv3
@@ -15,7 +15,7 @@
 @note:          Converts to Altera MIF format
                   Anaconda: run ./mif.py --size=<size> --width=<width> <infile>
 
-@see:           https://github.com/akaeba/mif
+@see:           https://github.com/akaeba/mifgen
 """
 
 
@@ -25,13 +25,13 @@ from datetime import datetime
 
 
 # CLI Parser
-parser = argparse.ArgumentParser(description='A script to convert binary assembly to a mif file')
+parser = argparse.ArgumentParser(description='Altera MIF convertor tool')
 
 parser.add_argument('infile', nargs=1, help='Input File', metavar='FILE')
 
 parser.add_argument('-o', '--outfile', nargs=1, type=str, default='', help='Output MIF File')
 parser.add_argument('-s', '--size', nargs=1, type=str, default='1024', help='MIF outfile size in byte')
-parser.add_argument('-w', '--width', nargs=1, type=int, default=1, choices=[1, 2, 4, 8], help='Number of bytes per word')
+parser.add_argument('-w', '--width', nargs=1, type=int, default=[1,], choices=[1, 2, 4, 8], help='Number of bytes per word')
 parser.add_argument('-e', '--endianness', nargs=1, type=str, default='big', choices=['big', 'little'], help='Endianness of output file')
 parser.add_argument('--nocompact', action='store_true')
 args = parser.parse_args()
